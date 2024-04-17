@@ -85,7 +85,7 @@ function MainNav() {
           </li>
 
           <li>
-          <StyledNavLink to='/bookings' >
+          <StyledNavLink to='/user' >
           <HiOutlineUserCircle />
             <span>
             Users
@@ -94,7 +94,7 @@ function MainNav() {
           </li>
 
           <li>
-          <StyledNavLink to='/bookings' >
+          <StyledNavLink to='/settings' >
           <HiOutlineCog6Tooth />
             <span>
             Settings
