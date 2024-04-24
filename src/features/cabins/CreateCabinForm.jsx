@@ -47,23 +47,19 @@ const Error = styled.span`
 `;
 
 function CreateCabinForm() {
-
-  const queryClient =useQueryClient();
-
-  const { register, handleSubmit ,reset } = useForm();
-  const { isLoading:isAddingCabin, mutate } = useMutation({
-
+  const queryClient = useQueryClient();
+  const { register, handleSubmit, reset } = useForm();
+  const { isLoading: isAddingCabin, mutate } = useMutation({
     mutationFn: createCabin,
     onSuccess: () => {
       toast.success("added a new cabin");
       queryClient.invalidateQueries({
-        queryKey:["cabin"]
-      })
+        queryKey: ["cabin"],
+      });
       reset();
     },
     onError: (err) => toast.error(err.message),
   });
-
 
   function onSubmit(data) {
     mutate(data);
@@ -117,6 +113,7 @@ function CreateCabinForm() {
         </Button>
         <Button disabled={isAddingCabin}>Edit cabin</Button>
       </FormRow>
+      
     </Form>
   );
 }
