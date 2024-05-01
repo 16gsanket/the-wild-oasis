@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCabin } from "../../services/apiCabins";
 import toast from "react-hot-toast";
+import FormRowRefactored from "../../ui/FormRowRefactored";
 
 const FormRow = styled.div`
   display: grid;
@@ -48,7 +49,11 @@ const Error = styled.span`
 
 function CreateCabinForm() {
   const queryClient = useQueryClient();
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit, reset, getValues, formState } = useForm();
+
+  const { errors } = formState;
+  // console.log(errors);
+
   const { isLoading: isAddingCabin, mutate } = useMutation({
     mutationFn: createCabin,
     onSuccess: () => {
@@ -62,23 +67,58 @@ function CreateCabinForm() {
   });
 
   function onSubmit(data) {
-    mutate(data);
+
+    mutate({...data , image:data.image[0]});
+  }
+  function onError(errors) {
+    console.log(errors);
   }
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form onSubmit={handleSubmit(onSubmit, onError)}>
       <FormRow>
         <Label htmlFor="name">Cabin name</Label>
-        <Input type="text" id="name" {...register("name")} />
+        <Input
+          type="text"
+          id="name"
+          {...register("name", { required: "name filed is required" })}
+        />
+        {errors?.name?.message && <Error>{errors.name.message}</Error>}
       </FormRow>
+
+      {/* <FormRowRefactored label='Cabin names please' error={errors?.name?.message}>
+
+      </FormRowRefactored> */}
 
       <FormRow>
         <Label htmlFor="maxCapacity">Maximum capacity</Label>
-        <Input type="number" id="maxCapacity" {...register("maxCapacity")} />
+        <Input
+          type="number"
+          id="maxCapacity"
+          {...register("maxCapacity", {
+            required: "description filed is required",
+          })}
+        />
+        {errors?.maxCapacity?.message && (
+          <Error>{errors.maxCapacity.message}</Error>
+        )}
       </FormRow>
 
       <FormRow>
         <Label htmlFor="regularPrice">Regular price</Label>
-        <Input type="number" id="regularPrice" {...register("regularPrice")} />
+        <Input
+          type="number"
+          id="regularPrice"
+          {...register("regularPrice", {
+            required: "price filed is required",
+            min: {
+              value: 1,
+              message: "value minimum should be 1",
+            },
+          })}
+        />
+        {errors?.regularPrice?.message && (
+          <Error>{errors.regularPrice.message}</Error>
+        )}
       </FormRow>
 
       <FormRow>
@@ -87,8 +127,14 @@ function CreateCabinForm() {
           type="number"
           id="discount"
           defaultValue={0}
-          {...register("discount")}
+          {...register("discount", {
+            required: "discount filed is required",
+            validate: (current_input_value) =>
+              current_input_value < getValues().regularPrice ||
+              "Discout should be less than regular Price",
+          })}
         />
+        {errors?.discount?.message && <Error>{errors.discount.message}</Error>}
       </FormRow>
 
       <FormRow>
@@ -97,13 +143,25 @@ function CreateCabinForm() {
           type="number"
           id="description"
           defaultValue=""
-          {...register("description")}
+          {...register("description", {
+            required: " description filed is required",
+          })}
         />
+        {errors?.description?.message && (
+          <Error>{errors.description.message}</Error>
+        )}
       </FormRow>
 
       <FormRow>
         <Label htmlFor="image">Cabin photo</Label>
-        <FileInput id="image" accept="image/*" />
+        <FileInput
+          id="image"
+          accept="image/*"
+          type="file"
+          {...register("image", {
+            required: "This filed is required",
+          })}
+        />
       </FormRow>
 
       <FormRow>
@@ -113,7 +171,6 @@ function CreateCabinForm() {
         </Button>
         <Button disabled={isAddingCabin}>Edit cabin</Button>
       </FormRow>
-      
     </Form>
   );
 }

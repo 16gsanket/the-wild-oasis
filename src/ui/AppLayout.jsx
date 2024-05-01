@@ -14,6 +14,7 @@ const StyledAppLayout = styled.div`
 const Main = styled.main`
   background-color: #f8f8f8;
   padding: 1.5rem 3rem 6rem;
+  overflow: scroll;
 `;
 
 const Container = styled.div`
