@@ -51,7 +51,7 @@ function CabinRow({cabin}) {
 
   const {id: cabinId,image , name , maxCapacity , discount , regularPrice:price , } = cabin
 
-  const {isLoading:isDeleting , mutate } = useMutation({
+  const {isLoading:isDeleting ,  mutate } = useMutation({
       mutationFn: deleteCabin,
       onSuccess : ()=>{
         toast.success('successfully deleted a cabin!')
