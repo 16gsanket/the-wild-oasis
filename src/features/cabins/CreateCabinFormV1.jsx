@@ -1,6 +1,3 @@
-
-//Cabin FormV1 is for editing the cabins ...
-
 import styled from "styled-components";
 
 import Input from "../../ui/Input";
@@ -50,17 +47,24 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
-function CreateCabinForm() {
+function CreateCabinFormV1({ cabinToEdit }) {
+  const { id,...editValues } = cabinToEdit;
+
+  console.log("cabin to be edited cred" , cabinToEdit )
+
   const queryClient = useQueryClient();
-  const { register, handleSubmit, reset, getValues, formState } = useForm();
+
+  const { register, handleSubmit, reset, getValues, formState } = useForm({
+    defaultValues: editValues,
+  });
 
   const { errors } = formState;
   // console.log(errors);
 
   const { isLoading: isAddingCabin, mutate } = useMutation({
-    mutationFn: createEditCabin,
+    mutationFn: ({cabinToEdit , id})=>createEditCabin(cabinToEdit , id),
     onSuccess: () => {
-      toast.success("added a new cabin");
+      toast.success("Cabin Edited Successfully");
       queryClient.invalidateQueries({
         queryKey: ["cabin"],
       });
@@ -70,8 +74,8 @@ function CreateCabinForm() {
   });
 
   function onSubmit(data) {
-
-    mutate({...data , image:data.image[0]});
+    console.log(data)
+    mutate(data,id );
   }
   function onError(errors) {
     console.log(errors);
@@ -79,7 +83,7 @@ function CreateCabinForm() {
   return (
     <Form onSubmit={handleSubmit(onSubmit, onError)}>
       <FormRow>
-        <Label htmlFor="name">Cabin name</Label>
+        <Label htmlFor="name">Cabin name here</Label>
         <Input
           type="text"
           id="name"
@@ -89,7 +93,6 @@ function CreateCabinForm() {
       </FormRow>
 
       {/* <FormRowRefactored label='Cabin names please' error={errors?.name?.message}>
-
       </FormRowRefactored> */}
 
       <FormRow>
@@ -155,17 +158,19 @@ function CreateCabinForm() {
         )}
       </FormRow>
 
-      <FormRow>
+
+       { /*<FormRow>
         <Label htmlFor="image">Cabin photo</Label>
         <FileInput
-          id="image"
+                  id="image"
           accept="image/*"
           type="file"
           {...register("image", {
             required: "This filed is required",
+            defaultValue: getValues().image
           })}
         />
-      </FormRow>
+        </FormRow> */}
 
       <FormRow>
         {/* type is an HTML attribute! */}
@@ -178,4 +183,4 @@ function CreateCabinForm() {
   );
 }
 
-export default CreateCabinForm;
+export default CreateCabinFormV1;
