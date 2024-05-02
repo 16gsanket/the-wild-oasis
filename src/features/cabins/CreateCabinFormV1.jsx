@@ -48,9 +48,7 @@ const Error = styled.span`
 `;
 
 function CreateCabinFormV1({ cabinToEdit }) {
-  const { id,...editValues } = cabinToEdit;
-
-  console.log("cabin to be edited cred" , cabinToEdit )
+  const { id, ...editValues } = cabinToEdit;
 
   const queryClient = useQueryClient();
 
@@ -62,7 +60,7 @@ function CreateCabinFormV1({ cabinToEdit }) {
   // console.log(errors);
 
   const { isLoading: isAddingCabin, mutate } = useMutation({
-    mutationFn: ({cabinToEdit , id})=>createEditCabin(cabinToEdit , id),
+    mutationFn: ({ cabinToEdit, id }) =>  createEditCabin(cabinToEdit, id) ,
     onSuccess: () => {
       toast.success("Cabin Edited Successfully");
       queryClient.invalidateQueries({
@@ -74,8 +72,9 @@ function CreateCabinFormV1({ cabinToEdit }) {
   });
 
   function onSubmit(data) {
-    console.log(data)
-    mutate(data,id );
+    if (data.image) mutate({ ...data, image: data.image[0] });
+
+    mutate({ data, id });
   }
   function onError(errors) {
     console.log(errors);
@@ -158,8 +157,7 @@ function CreateCabinFormV1({ cabinToEdit }) {
         )}
       </FormRow>
 
-
-       { /*<FormRow>
+      {/*<FormRow>
         <Label htmlFor="image">Cabin photo</Label>
         <FileInput
                   id="image"
