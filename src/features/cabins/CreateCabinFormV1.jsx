@@ -48,7 +48,7 @@ const Error = styled.span`
 `;
 
 function CreateCabinFormV1({ cabinToEdit }) {
-  const { id,...editValues } = cabinToEdit;
+  const { id, ...editValues } = cabinToEdit;
 
   console.log("cabin to be edited cred" , cabinToEdit )
 
