@@ -47,22 +47,30 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
+<<<<<<< HEAD
 function CreateCabinFormV1({ cabinToEdit }) {
   const { id, ...editValues } = cabinToEdit;
+=======
+function CreateCabinFormV1({ cabinToEdit = {} }) {
+  const { id:editId, ...editValues } = cabinToEdit;
+
+  const  isEditSession = Boolean(editId)
+  // console.log("cabin to be edited cred" , cabinToEdit )
+>>>>>>> 7237c832f843e1691bf991326bf6dbe848cc870e
 
   const queryClient = useQueryClient();
 
   const { register, handleSubmit, reset, getValues, formState } = useForm({
-    defaultValues: editValues,
+    defaultValues: isEditSession ?  editValues : {},
   });
 
   const { errors } = formState;
   // console.log(errors);
 
-  const { isLoading: isAddingCabin, mutate } = useMutation({
-    mutationFn: ({ cabinToEdit, id }) =>  createEditCabin(cabinToEdit, id) ,
+  const { isLoading: isAddingCabin, mutate: EditCabin } = useMutation({
+    mutationFn: ({cabinToEdit , id})=>createEditCabin(cabinToEdit , id),
     onSuccess: () => {
-      toast.success("Cabin Edited Successfully");
+      toast.success("Cabin Successfully Edited");
       queryClient.invalidateQueries({
         queryKey: ["cabin"],
       });
@@ -71,10 +79,14 @@ function CreateCabinFormV1({ cabinToEdit }) {
     onError: (err) => toast.error(err.message),
   });
 
-  function onSubmit(data) {
-    if (data.image) mutate({ ...data, image: data.image[0] });
+  const isWorking = isAddingCabin
 
-    mutate({ data, id });
+  function onSubmit(data) {
+
+    const image = typeof data.image === 'string' ? data.image : data.image[0]
+
+    // console.log(data)
+    EditCabin({cabinToEdit:{...data , image} , id:editId});
   }
   function onError(errors) {
     console.log(errors);
@@ -157,25 +169,26 @@ function CreateCabinFormV1({ cabinToEdit }) {
         )}
       </FormRow>
 
-      {/*<FormRow>
+
+       <FormRow>
         <Label htmlFor="image">Cabin photo</Label>
         <FileInput
                   id="image"
           accept="image/*"
           type="file"
           {...register("image", {
-            required: "This filed is required",
+            required: isEditSession ? false : "This filed is required",
             defaultValue: getValues().image
           })}
         />
-        </FormRow> */}
+        </FormRow> 
 
       <FormRow>
         {/* type is an HTML attribute! */}
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button disabled={isAddingCabin}>Edit cabin</Button>
+        <Button disabled={isAddingCabin}>{isEditSession && 'Edit cabin'}</Button>
       </FormRow>
     </Form>
   );
