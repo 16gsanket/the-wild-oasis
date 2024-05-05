@@ -51,9 +51,12 @@ const hasImagePath = newCabin.image?.startsWith?.(supabaseUrl);
   const { data, error } = await query.select().single();
 
   if (error) {
+    console.log(error)
     throw new Error("Cannot delete the Cabin");
   }
   //2) Uploading the Image to the Supabase Bucket ...
+
+  if(hasImagePath) return data;
 
   const { error: storageError } = await supabase.storage
     .from("cabin-images")

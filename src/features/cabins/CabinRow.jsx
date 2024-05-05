@@ -1,11 +1,13 @@
 import styled from "styled-components";
 import {formatCurrency} from "../../utils/helpers"
-import {deleteCabin} from "../../services/apiCabins"
+import {createEditCabin, deleteCabin} from "../../services/apiCabins"
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from 'react-hot-toast';
 import { useState } from "react";
 import CreateCabinFormV1 from './CreateCabinFormV1'
 import { useDeleteCabins } from "./useDeleteCabins";
+import { HiPencil, HiSquare2Stack, HiTrash } from "react-icons/hi2";
+import useCreateCabin from "./useCreateCabin";
 
 
 
@@ -50,14 +52,21 @@ const Discount = styled.div`
 
 function CabinRow({cabin}) {
   const[showForm , setShowForm] = useState(false)
-
+  const {isDeleting , deleteCabin} = useDeleteCabins()
+  const {isAddingCabin , createCabin} = useCreateCabin()
   
-  const {id: cabinId,image , name , maxCapacity , discount , regularPrice:price , } = cabin
+  const {id: cabinId,image , name , maxCapacity , discount , regularPrice:price , description } = cabin
+
+  function handleCreateDuplicate(){
+    createCabin({
+      name:`Copy of ${name}`,
+      image , name , maxCapacity , discount ,price , description
+    })
+  }
   
  
 
-  const {isDeleting , deleteCabin} = useDeleteCabins()
-   deleteCabin
+  // deleteCabin
 
   return (
     <>
@@ -70,8 +79,9 @@ function CabinRow({cabin}) {
       {discount ? <Discount>{formatCurrency(discount)}</Discount> : <span>-</span>}
 
       <div>
-        <button onClick={()=>setShowForm(s=>!s)}>Edit</button>
-      <button onClick={()=>deleteCabin(cabinId)} disabled={isDeleting}>Delete</button>
+        <button onClick={()=>handleCreateDuplicate()}><HiSquare2Stack></HiSquare2Stack></button>
+        <button onClick={()=>setShowForm(s=>!s)}><HiPencil></HiPencil></button>
+      <button onClick={()=>deleteCabin(cabinId)} disabled={isDeleting}><HiTrash></HiTrash></button>
       </div>
     </TableRow>
     {showForm && <CreateCabinFormV1 cabinToEdit={cabin}/>}
