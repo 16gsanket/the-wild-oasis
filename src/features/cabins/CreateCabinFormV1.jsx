@@ -47,16 +47,11 @@ const Error = styled.span`
   color: var(--color-red-700);
 `;
 
-<<<<<<< HEAD
-function CreateCabinFormV1({ cabinToEdit }) {
-  const { id, ...editValues } = cabinToEdit;
-=======
 function CreateCabinFormV1({ cabinToEdit = {} }) {
   const { id:editId, ...editValues } = cabinToEdit;
 
   const  isEditSession = Boolean(editId)
   // console.log("cabin to be edited cred" , cabinToEdit )
->>>>>>> 7237c832f843e1691bf991326bf6dbe848cc870e
 
   const queryClient = useQueryClient();
 
